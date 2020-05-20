@@ -2,29 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 
 namespace SeleniumTests
 {
     public class TestBase
     {
-
+        private LoginPage loginPage;
+        private GroupPage groupPage;
+        private ContactPage contactPage;
         protected IWebDriver driver;
+        protected WebDriverWait wait;
         private StringBuilder verificationErrors;
        // private string baseURL;
         protected bool acceptNextAlert = true;
 
         [SetUp]
+
         public void SetupTest()
         {
-
             driver = new FirefoxDriver(@"C:\distr");
-           // baseURL = "https://www.google.com/";
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+            // baseURL = "https://www.google.com/";
             verificationErrors = new StringBuilder();
         }
 
@@ -42,47 +45,118 @@ namespace SeleniumTests
             Assert.AreEqual("", verificationErrors.ToString());
         }
 
+        public LoginPage LoginPage
+        {
+            get
+            {
+                if (loginPage == null)
+                {
+                    loginPage = new LoginPage();
+                }
+                return loginPage;
+            }
+        }
+        public GroupPage GroupPage
+        {
+            get
+            {
+                if (groupPage  == null)
+                {
+                    groupPage = new GroupPage();
+                }
+                return groupPage;
+            }
+        }
+        public ContactPage ContactPage
+        {
+            get
+            {
+                if (contactPage == null)
+                {
+                    contactPage = new ContactPage();
+                }
+                return contactPage;
+            }
+        }
+
+
+        public void WaitUntilVisible(By locator)
+        {
+            wait = new WebDriverWait(driver, new TimeSpan(0, 0, 3));
+            wait.Message = "Element with locator '" + locator + "' was not visible in 3 seconds";
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
+        }
+
+        public void WaitUntilClickable(By locator)
+        {
+            wait = new WebDriverWait(driver, new TimeSpan(0, 0, 2));
+            wait.Message = "Element with locator '" + locator + "' was not clickable in 2 seconds";
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+        }
+
+        public static Func<IWebDriver, IWebElement> Condition(By locator)
+        {
+            return (driver) =>
+            {
+                var element = driver.FindElements(locator).FirstOrDefault();
+                return element != null && element.Displayed && element.Enabled ? element : null;
+            };
+        }
+
+        protected void Click(By locator)
+        {
+            new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(Condition(locator)).Click();
+           /* WaitUntilClickable(locator);
+            driver.FindElement(locator).Click(); альтернативный вариант*/ 
+        }
+
         public void LogOut()
         {
-            driver.FindElement(By.LinkText("Logout")).Click();
+            // driver.FindElement(By.LinkText("Logout")).Click();
+            Click(LoginPage.SubmitLogOutButton);
         }
 
         public void CreateNewGroup(GroupData group)
         {
-            driver.FindElement(By.Name("new")).Click();
+            // Click(OpenGroupsPage.Header)
+            // WaitUntilVisible(GroupPage.Header);
+            //driver.FindElement(GroupPage.CreateNewGroupButton).Click();
+            Click(GroupPage.CreateNewGroupButton);
             FillGroupData(group);
-            driver.FindElement(By.Name("submit")).Click();
+            Click(GroupPage.SaveNewGroupSubmit);
         }
 
-        public void FillTheField(string location, string value)
+        public void FillTheField(By location, string value)
         {
-            driver.FindElement(By.Name(location)).Click();
-            driver.FindElement(By.Name(location)).Clear();
-            driver.FindElement(By.Name(location)).SendKeys(value);
+            driver.FindElement(location).Click();
+            driver.FindElement(location).Clear();
+            driver.FindElement(location).SendKeys(value);
         }
 
         public void OpenGroupsPage()
         {
-            driver.FindElement(By.LinkText("groups")).Click();
+            Click(GroupPage.OpenGroupPageButton);
         }
 
         public void Login(AccountData user)
         {
-            FillTheField("user", user.Username);
-            FillTheField("pass", user.Password);
-            driver.FindElement(By.XPath("//input[@value='Login']")).Click();
+            FillTheField(LoginPage.UserTextField, user.Username);
+            FillTheField(LoginPage.PasswordTextField, user.Password);
+            Click(LoginPage.SubmitLoginButton);
+
         }
 
         public void OpenHomePage()
         {
             driver.Navigate().GoToUrl("http://localhost/addressbook/group.php");
+
         }
 
         public GroupData GetGroupDataFromForm()
         {
-            string groupName = driver.FindElement(By.Name("group_name")).GetAttribute("value");
-            string header = driver.FindElement(By.Name("group_header")).Text;
-            string footer = driver.FindElement(By.Name("group_footer")).Text;
+            string groupName = driver.FindElement(GroupPage.GroupNameTextField).GetAttribute("value");
+            string header = driver.FindElement(GroupPage.GroupHeaderTextField).Text;
+            string footer = driver.FindElement(GroupPage.GroupFooterTextField).Text;
             return new GroupData(groupName) { Header = header, Footer = footer };
 
 
@@ -90,46 +164,51 @@ namespace SeleniumTests
 
         public void OpenLastCreatedLastGroup()
         {
-            driver.FindElement(By.Name("edit")).Click();
+            //driver.FindElement(By.Name("edit")).Click();
+            Click(GroupPage.EditGroupButton);
+
         }
 
         public void FillGroupData(GroupData group)
         {
-            FillTheField("group_name", group.Name);
+            FillTheField(GroupPage.GroupNameTextField, group.Name);
             if (group.Header != null)
             {
-                FillTheField("group_header", group.Header);
+                FillTheField(GroupPage.GroupHeaderTextField, group.Header);
             }
             if (group.Footer != null)
             {
-                FillTheField("group_footer", group.Footer);
+                FillTheField(GroupPage.GroupFooterTextField, group.Footer);
             }
         }
 
         public void EditLastGroup(GroupData group)
         {
             FillGroupData(group);
-            driver.FindElement(By.Name("update")).Click();
+            //  driver.FindElement(By.Name("update")).Click();
+            Click(GroupPage.SaveEditGroupSubmit);
         }
 
         public ContactData GetCreatedContactData()
         {
 
-            string contactFirstname = driver.FindElement(By.Name("firstname")).GetAttribute("value");
-            string contactMiddlename = driver.FindElement(By.Name("middlename")).GetAttribute("value");
-            string contactLastname = driver.FindElement(By.Name("lastname")).GetAttribute("value");
+            string contactFirstname = driver.FindElement(ContactPage.ContactFirstnameTextField).GetAttribute("value");
+            string contactMiddlename = driver.FindElement(ContactPage.ContactMiddlenameTextField).GetAttribute("value");
+            string contactLastname = driver.FindElement(ContactPage.ContactLastnameTextField).GetAttribute("value");
             return new ContactData(contactFirstname, contactMiddlename, contactLastname);
         }
 
 
         public void AddNewContact(ContactData contact)
         {
-            driver.FindElement(By.ClassName("all")).Click();
-            FillTheField("firstname", contact.Firstname);
-            FillTheField("middlename", contact.Middlename);
-            FillTheField("lastname", contact.Lastname);
+            //driver.FindElement(By.ClassName("all")).Click();
+            Click(ContactPage.AddNewContactPage);
+            FillTheField(ContactPage.ContactFirstnameTextField, contact.Firstname);
+            FillTheField(ContactPage.ContactMiddlenameTextField, contact.Middlename);
+            FillTheField(ContactPage.ContactLastnameTextField, contact.Lastname);
 
-            driver.FindElement(By.Name("submit")).Click();
+            // driver.FindElement(ContactPage.AddNewSubmitButton).Click();
+            Click(ContactPage.AddNewSubmitButton);
         }
 
         public void LastContactEditButtonClick()
@@ -140,15 +219,16 @@ namespace SeleniumTests
 
         public void EditLastContact(ContactData contact)
         {
-            FillTheField("firstname", contact.Firstname);
-            FillTheField("middlename", contact.Middlename);
-            FillTheField("lastname", contact.Lastname);
-            driver.FindElement(By.XPath("(//input[@name='update'])[2]")).Click();
+            FillTheField(ContactPage.ContactFirstnameTextField, contact.Firstname);
+            FillTheField(ContactPage.ContactMiddlenameTextField, contact.Middlename);
+            FillTheField(ContactPage.ContactLastnameTextField, contact.Lastname);
+            driver.FindElement(ContactPage.EditSubmitButton).Click();
         }
 
         public void OpenContactPage()
         {
-            driver.FindElement(By.LinkText("home")).Click();
+           //driver.FindElement(By.LinkText("home")).Click();
+            Click(ContactPage.OpenContactPage);
         }
 
 
@@ -197,18 +277,21 @@ namespace SeleniumTests
 
         public void DeleteLastGroup()
         {
-            driver.FindElement(By.Name("delete")).Click();
+            //  driver.FindElement(By.Name("delete")).Click();
+            Click(GroupPage.DeleteGroup);
         }
 
         public void DeleteLastContact()
         {
             // driver.FindElement(By.Id(FindMaxById())).Click();
-           
-            driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
-            IWait<IWebDriver> wait = new WebDriverWait(driver, TimeSpan.FromSeconds(100));
+
+            // driver.FindElement(By.XPath("//input[@value='Delete']")).Click();
+            // Click(ContactPage.DeleteContactPage);
+            driver.FindElement(ContactPage.DeleteContactPage).Click();
+            IWait<IWebDriver> wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
             wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
             wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
-            wait.Until(ExpectedConditions.AlertIsPresent());
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.AlertIsPresent());
             driver.SwitchTo().Alert().Accept();
           
         }
