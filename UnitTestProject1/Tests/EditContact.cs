@@ -19,29 +19,29 @@ namespace SeleniumTests
             [Test]
             public void EditcontactTest()
         {
-            OpenHomePage();
+            app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            Login(user);
-            OpenContactPage();
+            app.Auth.Login(user);
+            app.Contact.OpenContactPage();
             ContactData contact = new ContactData("FM", "MN", "LN");
             ContactData editContact = new ContactData("EditFM", "EditMN", "EditLN");
-            if (FindMaxItem() == null)
+            if (app.Helper.FindMaxItem() == null)
             {
-                AddNewContact(contact);
-                OpenContactPage();
+                app.Contact.AddNewContact(contact);
+                app.Contact.OpenContactPage();
             }
-            FindAndClickMaxItems();
-            LastContactEditButtonClick();
-            EditLastContact(editContact);
-            OpenContactPage();
-            FindAndClickMaxItems();
-            LastContactEditButtonClick();
-            ContactData newcontact = GetCreatedContactData();
+            app.Helper.FindAndClickMaxItems();
+            app.Contact.LastContactEditButtonClick();
+            app.Contact.EditLastContact(editContact);
+            app.Contact.OpenContactPage();
+            app.Helper.FindAndClickMaxItems();
+            app.Contact.LastContactEditButtonClick();
+            ContactData newcontact = app.Contact.GetCreatedContactData();
 
             Assert.AreEqual(editContact.Firstname, newcontact.Firstname);
             Assert.AreEqual(editContact.Middlename, newcontact.Middlename);
             Assert.AreEqual(editContact.Lastname, newcontact.Lastname);
-            LogOut();
+            app.Auth.LogOut();
 
         }
 

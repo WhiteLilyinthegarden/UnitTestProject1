@@ -13,24 +13,24 @@ namespace SeleniumTests
         [Test]
         public void CreateGroupTest()
         {
-            OpenHomePage();
+            app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            Login(user);
-            OpenGroupsPage();
+            app.Auth.Login(user);
+            app.Group.OpenGroupsPage();
             GroupData group = new GroupData("New Group") { Header = "Header", Footer = "Footer" };
-            CreateNewGroup(group);
-            OpenGroupsPage();
-            FindAndClickMaxItems();
-            OpenLastCreatedLastGroup();
+            app.Group.CreateNewGroup(group);
+            app.Group.OpenGroupsPage();
+            app.Helper.FindAndClickMaxItems();
+            app.Group.OpenLastCreatedLastGroup();
    
-            GroupData newgroup = GetGroupDataFromForm();
+            GroupData newgroup = app.Group.GetGroupDataFromForm();
             Assert.AreEqual(group.Name, newgroup.Name);
             if (group.Header != null)
                 Assert.AreEqual(group.Header, newgroup.Header);
             if (group.Footer!= null)
                 Assert.AreEqual(group.Footer, newgroup.Footer);
 
-            LogOut();
+            app.Auth.LogOut();
         }
 
         

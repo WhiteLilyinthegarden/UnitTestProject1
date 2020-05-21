@@ -12,24 +12,24 @@ namespace SeleniumTests
         [Test]
         public void TheDeleteGroupTest()
         {
-            OpenHomePage();
+            app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            Login(user);
-            OpenGroupsPage();
-            if (FindMaxItem() == null)
+            app.Auth.Login(user);
+            app.Group.OpenGroupsPage();
+            if (app.Helper.FindMaxItem() == null)
             {
                 GroupData group = new GroupData("New Group") { Header = "Header", Footer = "Footer" };
-                CreateNewGroup(group);
-                OpenGroupsPage();
+                app.Group.CreateNewGroup(group);
+                app.Group.OpenGroupsPage();
             }
 
-            int id = FindAndClickMaxItems();
-            DeleteLastGroup();
-            OpenGroupsPage();
-            Assert.IsTrue(IsIdDeleted(id, "value"));
- 
+            int id = app.Helper.FindAndClickMaxItems();
+            app.Group.DeleteLastGroup();
+            app.Group.OpenGroupsPage();
+            Assert.IsTrue(app.Helper.IsIdDeleted(id, "value"));
 
-            LogOut();
+
+            app.Auth.LogOut();
 
         }
         

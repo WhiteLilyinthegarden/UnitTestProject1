@@ -17,21 +17,22 @@ namespace SeleniumTests
         [Test]
         public void CreateContactTest()
         {
-            OpenHomePage();
+           
+            app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            Login(user);
-            OpenContactPage();
+            app.Auth.Login(user);
+            app.Contact.OpenContactPage();
             ContactData contact = new ContactData("FM", "MN", "LN");
-            AddNewContact(contact);
-            OpenContactPage();
-            LastContactEditButtonClick();
+            app.Contact.AddNewContact(contact);
+            app.Contact.OpenContactPage();
+            app.Contact.LastContactEditButtonClick();
 
-            ContactData newcontact = GetCreatedContactData();
+            ContactData newcontact = app.Contact.GetCreatedContactData();
             Assert.AreEqual(contact.Firstname, newcontact.Firstname);
             Assert.AreEqual(contact.Middlename, newcontact.Middlename);
             Assert.AreEqual(contact.Lastname, newcontact.Lastname);
 
-            LogOut();
+            app.Auth.LogOut();
         }
 
 

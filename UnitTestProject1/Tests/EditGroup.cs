@@ -20,26 +20,25 @@ namespace SeleniumTests
         [Test]
         public void EditgroupTest()
         {
-            OpenHomePage();
+            app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            Login(user);
-
-            OpenGroupsPage();
+            app.Auth.Login(user);
+            app.Group.OpenGroupsPage();
             GroupData group = new GroupData("New Group") { Header = "Header", Footer = "Footer" };
             GroupData editGroup = new GroupData("Edit Group") { Header = "Edit Header", Footer = "Edit Footer" };
-            if (FindMaxItem() == null)
+            if (app.Helper.FindMaxItem() == null)
             {
-                CreateNewGroup(group);
-                OpenGroupsPage();
+                app.Group.CreateNewGroup(group);
+                app.Group.OpenGroupsPage();
             }
-            FindAndClickMaxItems();
-            OpenLastCreatedLastGroup();
-            EditLastGroup(editGroup);
-            OpenGroupsPage();
-            FindAndClickMaxItems();
-            OpenLastCreatedLastGroup();
+            app.Helper.FindAndClickMaxItems();
+            app.Group.OpenLastCreatedLastGroup();
+            app.Group.EditLastGroup(editGroup);
+            app.Group.OpenGroupsPage();
+            app.Helper.FindAndClickMaxItems();
+            app.Group.OpenLastCreatedLastGroup();
 
-            GroupData newgroup = GetGroupDataFromForm();
+            GroupData newgroup = app.Group.GetGroupDataFromForm();
             Assert.AreEqual(editGroup.Name, newgroup.Name);
             if (editGroup.Header != null)
                 Assert.AreEqual(editGroup.Header, newgroup.Header);
@@ -47,7 +46,7 @@ namespace SeleniumTests
                 Assert.AreEqual(editGroup.Footer, newgroup.Footer);
 
 
-            LogOut();
+            app.Auth.LogOut();
 
         }
 

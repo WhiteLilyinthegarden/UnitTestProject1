@@ -19,25 +19,24 @@ namespace SeleniumTests
         [Test]
         public void TheDeleteContactTest()
         {
-            OpenHomePage();
+            app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            Login(user);
-           
-            OpenContactPage();
-            if (FindMaxItem() == null)
+            app.Auth.Login(user);
+            app.Contact.OpenContactPage();
+            if (app.Helper.FindMaxItem() == null)
             {
                 ContactData contact = new ContactData("FM", "MN", "LN");
-                AddNewContact(contact);
-                OpenContactPage();
+                app.Contact.AddNewContact(contact);
+                app.Contact.OpenContactPage();
 
             }
 
-            int id = FindAndClickMaxItems();
-            DeleteLastContact();
-            OpenContactPage();
-            Assert.IsTrue(IsIdDeleted(id, "id"));
-          
-            LogOut();
+            int id = app.Helper.FindAndClickMaxItems();
+            app.Contact.DeleteLastContact();
+            app.Contact.OpenContactPage();
+            Assert.IsTrue(app.Helper.IsIdDeleted(id, "id"));
+
+            app.Auth.LogOut();
 
         }
 
