@@ -12,17 +12,17 @@ using OpenQA.Selenium.Support.UI;
 namespace SeleniumTests
     {
     [TestFixture]
-    public class DeleteContact : TestBase
+    public class DeleteContact : AuthBase
     {
 
 
         [Test]
         public void TheDeleteContactTest()
         {
-            app.Navigation.OpenHomePage();
+            /*app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
             app.Auth.Login(user);
-            app.Contact.OpenContactPage();
+            app.Contact.OpenContactPage();*/
             if (app.Helper.FindMaxItem() == null)
             {
                 ContactData contact = new ContactData("FM", "MN", "LN");

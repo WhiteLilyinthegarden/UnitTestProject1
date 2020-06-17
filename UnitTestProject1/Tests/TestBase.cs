@@ -19,23 +19,26 @@ namespace SeleniumTests
         [SetUp]
         public void SetupTest()
         {
-            app = new ApplicationManager();
+            app = ApplicationManager.GetInstance();
+            app.Navigation.OpenHomePage();
         }
 
-        [TearDown]
-        public void TeardownTest()
-        {
-            app.Stop();
-          /*  try
-            {
-                driver.Quit();
-            }
-            catch (Exception)
-            {
-                // Ignore errors if unable to close the browser
-            }
-            Assert.AreEqual("", verificationErrors.ToString()); */
-        }
+
+
+        /*   [TearDown]
+           public void TeardownTest()
+           {
+               app.Stop();
+             /*  try
+               {
+                   driver.Quit();
+               }
+               catch (Exception)
+               {
+                   // Ignore errors if unable to close the browser
+               }
+               Assert.AreEqual("", verificationErrors.ToString()); */
+        //}
 
 
     }

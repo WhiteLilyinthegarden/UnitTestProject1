@@ -15,6 +15,7 @@ namespace SeleniumTests
         public By UserTextField { get { return By.Name("user"); } }
         public By PasswordTextField { get { return By.Name("pass"); } }
         public By SubmitLoginButton { get { return By.XPath("//input[@value='Login']"); } }
+        public By LoginNameText { get { return By.XPath("//form[@name='logout']"); } }
         public By SubmitLogOutButton { get { return By.LinkText("Logout"); } }
     }
 }

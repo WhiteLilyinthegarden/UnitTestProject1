@@ -10,7 +10,7 @@ using OpenQA.Selenium.Support.UI;
 namespace SeleniumTests
 {
     [TestFixture]
-    public class CreateContact : TestBase
+    public class CreateContact : AuthBase
     {
 
 
@@ -18,10 +18,10 @@ namespace SeleniumTests
         public void CreateContactTest()
         {
            
-            app.Navigation.OpenHomePage();
-            AccountData user = new AccountData("admin", "secret");
+            //app.Navigation.OpenHomePage();
+            /*AccountData user = new AccountData("admin", "secret");
             app.Auth.Login(user);
-            app.Contact.OpenContactPage();
+            app.Contact.OpenContactPage();*/
             ContactData contact = new ContactData("FM", "MN", "LN");
             app.Contact.AddNewContact(contact);
             app.Contact.OpenContactPage();

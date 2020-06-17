@@ -7,15 +7,15 @@ using OpenQA.Selenium.Firefox;
 namespace SeleniumTests
 {
     [TestFixture]
-    public class CreateGroup : TestBase
+    public class CreateGroup : AuthBase
     {     
 
         [Test]
         public void CreateGroupTest()
         {
-            app.Navigation.OpenHomePage();
+            /*app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            app.Auth.Login(user);
+            app.Auth.Login(user);*/
             app.Group.OpenGroupsPage();
             GroupData group = new GroupData("New Group") { Header = "Header", Footer = "Footer" };
             app.Group.CreateNewGroup(group);

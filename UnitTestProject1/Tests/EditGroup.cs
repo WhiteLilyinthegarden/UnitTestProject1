@@ -13,16 +13,16 @@ using OpenQA.Selenium.Support.UI;
 namespace SeleniumTests
 {
     [TestFixture]
-    public class EditGroup : TestBase
+    public class EditGroup : AuthBase
     {
 
 
         [Test]
         public void EditgroupTest()
         {
-            app.Navigation.OpenHomePage();
+            /*app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            app.Auth.Login(user);
+            app.Auth.Login(user);*/
             app.Group.OpenGroupsPage();
             GroupData group = new GroupData("New Group") { Header = "Header", Footer = "Footer" };
             GroupData editGroup = new GroupData("Edit Group") { Header = "Edit Header", Footer = "Edit Footer" };

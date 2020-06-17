@@ -7,14 +7,14 @@ using OpenQA.Selenium.Firefox;
 namespace SeleniumTests
 {
     [TestFixture]
-    public class DeleteGroup : TestBase
+    public class DeleteGroup : AuthBase
     {
         [Test]
         public void TheDeleteGroupTest()
         {
-            app.Navigation.OpenHomePage();
+            /*app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
-            app.Auth.Login(user);
+            app.Auth.Login(user);*/
             app.Group.OpenGroupsPage();
             if (app.Helper.FindMaxItem() == null)
             {

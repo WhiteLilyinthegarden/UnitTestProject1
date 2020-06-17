@@ -17,8 +17,19 @@ namespace SeleniumTests
         public LoginHelper(ApplicationManager manager) : base(manager)
         {
         }
+
         public void Login(AccountData user)
         {
+            if (IsLoggedIn())
+            {
+                if (IsLoggedIn(user.Username))
+                {
+                    return;
+                }
+                LogOut();
+            }
+
+            //LoginCheck(user.Username);
             FillTheField(LoginPage.UserTextField, user.Username);
             FillTheField(LoginPage.PasswordTextField, user.Password);
             Click(LoginPage.SubmitLoginButton);
@@ -30,6 +41,7 @@ namespace SeleniumTests
         {
             // driver.FindElement(By.LinkText("Logout")).Click();
             Click(LoginPage.SubmitLogOutButton);
+            WaitUntilVisible(LoginPage.SubmitLoginButton);
         }
         public LoginPage LoginPage
         {
@@ -42,5 +54,38 @@ namespace SeleniumTests
                 return loginPage;
             }
         }
+        public bool IsLoggedIn()
+        {
+            //if (driver.FindElement(LoginPage.SubmitLogOutButton).Enabled)
+            //{
+            //    return true;
+            //}
+            //return false;
+            return IsElementPresent(LoginPage.SubmitLogOutButton);
+        }
+        public bool IsLoggedIn(string username)
+        {
+            string loginInName = driver.FindElement(LoginPage.LoginNameText).Text;
+            username = "("+ username +") Logout";
+            if (loginInName.Equals(username))
+            {
+                return true;
+            }
+            return false;
+        }
+        /*public void LoginCheck(string user_temp)
+        {
+
+            if (IsLoggedIn())
+            {
+                if (IsLoggedIn(user_temp))
+                {
+                    return;
+                }
+                LogOut();
+
+
+            }
+        }*/
     }
 }

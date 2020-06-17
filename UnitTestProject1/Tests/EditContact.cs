@@ -12,17 +12,17 @@ using OpenQA.Selenium.Support.UI;
 namespace SeleniumTests
     {
         [TestFixture]
-        public class EditContact :TestBase
+        public class EditContact :AuthBase
        {
         
 
             [Test]
             public void EditcontactTest()
         {
-            app.Navigation.OpenHomePage();
+            /*app.Navigation.OpenHomePage();
             AccountData user = new AccountData("admin", "secret");
             app.Auth.Login(user);
-            app.Contact.OpenContactPage();
+            app.Contact.OpenContactPage();*/
             ContactData contact = new ContactData("FM", "MN", "LN");
             ContactData editContact = new ContactData("EditFM", "EditMN", "EditLN");
             if (app.Helper.FindMaxItem() == null)

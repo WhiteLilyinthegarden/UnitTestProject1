@@ -14,7 +14,7 @@ namespace SeleniumTests
     {
         
         protected WebDriverWait wait;
-        private StringBuilder verificationErrors;
+       // private StringBuilder verificationErrors;
         //private string baseURL;
         protected bool acceptNextAlert = true;
         protected ApplicationManager manager;
@@ -28,7 +28,7 @@ namespace SeleniumTests
 
         public void WaitUntilVisible(By locator)
         {
-            wait = new WebDriverWait(driver, new TimeSpan(0, 0, 3));
+            wait = new WebDriverWait(driver, new TimeSpan(0, 0, 4));
             wait.Message = "Element with locator '" + locator + "' was not visible in 3 seconds";
             wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
         }
@@ -51,7 +51,7 @@ namespace SeleniumTests
 
         protected void Click(By locator)
         {
-            new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(Condition(locator)).Click();
+            new WebDriverWait(driver, TimeSpan.FromSeconds(3)).Until(Condition(locator)).Click();
             /* WaitUntilClickable(locator);
              driver.FindElement(locator).Click(); альтернативный вариант*/
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -19,12 +20,13 @@ namespace SeleniumTests
         private GroupHelper group;
         private ContactHelper contact;
         private HelperBase helper;
+        private static ThreadLocal<ApplicationManager> app = new ThreadLocal<ApplicationManager>();
 
         public ApplicationManager()
         {
             driver = new FirefoxDriver(@"C:\distr");
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
-            baseURL = "http://localhost/addressbook/";
+            baseURL = Settings.BaseURL;
            // verificationErrors = new StringBuilder();
             group = new GroupHelper(this);
             contact = new ContactHelper(this);
@@ -33,6 +35,22 @@ namespace SeleniumTests
             helper = new HelperBase(this);
 
         }
+         public static ApplicationManager GetInstance()
+        {
+            if (!app.IsValueCreated)
+            {
+                ApplicationManager newInstance = new ApplicationManager();
+                newInstance.Navigation.OpenHomePage();
+                app.Value = newInstance;
+            }
+            return app.Value;
+        }
+
+        ~ApplicationManager()
+        {
+            Stop();
+        }
+
         public IWebDriver Driver
         {
             get
